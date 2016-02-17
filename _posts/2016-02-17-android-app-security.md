@@ -6,6 +6,8 @@ categories: Security
 tags: Android Security
 ---
 
+> 以下文字为某次听见做记录
+
 # 数据泄漏 #
 - 本地文件敏感数据不能明文保存，不能伪加密（Base64，自定义算法等）
 - android:allowbackup=false. 防止 adb backup 导出数据
