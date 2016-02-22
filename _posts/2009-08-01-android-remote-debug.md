@@ -8,7 +8,7 @@ tags: Android Debug
 
 # 问题背景 #
 
-我们使用eclipse调试开发的apk没有问题，但是如果需要调试framework、service、RIL等中间层的代码如何调试呢？下面介绍一下使用Eclipse结合DDMS使用java的远程调试方法来调试Android中间层代码。
+我们使用eclipse调试apk没有问题，但是如果需要调试framework、service、RIL等中间层的代码如何调试呢？下面介绍一下使用Eclipse结合DDMS使用java的远程调试方法来调试Android中间层代码。
 
 # 调试方法 #
 
