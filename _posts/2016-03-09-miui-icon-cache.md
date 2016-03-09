@@ -2,7 +2,7 @@
 layout: post
 title:  "MIUI系统上apk更改icon后桌面icon不更新"
 date:   2016-03-09
-categories: debug
+categories: miui
 tags: MIUI
 ---
 
