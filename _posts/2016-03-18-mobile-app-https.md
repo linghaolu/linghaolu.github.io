@@ -26,3 +26,7 @@ https 也不是绝对安全的，存在中间人攻击。对于web页面https防
 # 注意 #
 
 web 页面不能部署在这个自签名域名下，这个域名只能部署 api 接口。
+
+
+参考
+> http://www.oschina.net/translate/android-security-implementation-of-self-signed-ssl
