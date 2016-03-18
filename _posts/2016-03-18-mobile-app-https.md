@@ -29,4 +29,5 @@ web 页面不能部署在这个自签名域名下，这个域名只能部署 api
 
 
 参考
+
 > http://www.oschina.net/translate/android-security-implementation-of-self-signed-ssl
