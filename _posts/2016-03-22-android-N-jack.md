@@ -1,9 +1,9 @@
 ---
 layout: post
 title:  "Android N Jack 编译器负面影响"
-date:   2016-03-18
-categories: https
-tags: https
+date:   2016-03-22
+categories: Android-N
+tags: Android-N
 ---
 
 
