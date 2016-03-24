@@ -41,4 +41,4 @@ ndk 开发只能调用 public api，如果调用非public api 在将来的官方
 
 参考
 
-> [http://developer.android.com/preview/j8-jack.html](http://developer.android.com/preview/behavior-changes.html)
+> [http://developer.android.com/preview/behavior-changes.html](http://developer.android.com/preview/behavior-changes.html)
