@@ -16,13 +16,14 @@ tags: Android-N
 
 - Android N 应该会出来限制app后台运行的机制，禁止app依赖于后台运行的service这种工作方法。并且给出了新的手段，让开发者在这种状态下测试app的兼容性，并且建议开发者移出这些功能。！！！以后push咋搞！！！。
 
-	- To simulate conditions where implicit broadcasts and background services are unavailable, enter the following command:	
+	- To simulate conditions where implicit broadcasts and background services are unavailable, enter the following command:	  
 	
- 		`$ adb shell cmd appops set RUN_IN_BACKGROUND ignore`
+ 		`$ adb shell cmd appops set RUN_IN_BACKGROUND ignore`    
 
-	- To re-enable implicit broadcasts and background services, enter the following command:
+
+	- To re-enable implicit broadcasts and background services, enter the following command:   
 	
-		`$ adb shell cmd appops set RUN_IN_BACKGROUND allow`
+		`$ adb shell cmd appops set RUN_IN_BACKGROUND allow`   
 
 
 # Screen Zoom #
