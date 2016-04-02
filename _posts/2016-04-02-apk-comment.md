@@ -68,4 +68,6 @@ apk 默认情况下没有comment，所以 comment length的short 两个字节为
 
 # 具体实现 #
 
+这种办法生成效率极高，读取效率也是几种方法中最高的。非加密条件下10ms级别（nexus s）。
+
 请参考项目: [https://github.com/linghaolu/apkcomment](https://github.com/linghaolu/apkcomment)
