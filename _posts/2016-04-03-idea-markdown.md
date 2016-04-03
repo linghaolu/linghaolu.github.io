@@ -24,4 +24,4 @@ markdown 文档格式已经作为目前业内, 甚至产品界一个文档标准
 虽然该插件支持表格,但是默认设置,还是不能正常工作,至少 mac 下不能正常工作. 需要手动设置一下, 把预览器设置为 JavaFx Webview 就能正常
 显示表格了.
 
-![setting](assets/posts/2016-04-02-idea-markdown/idea-markdown.png)
+![setting](/assets/posts/2016-04-02-idea-markdown/idea-markdown.png)
