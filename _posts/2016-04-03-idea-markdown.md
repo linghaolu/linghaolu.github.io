@@ -17,7 +17,7 @@ markdown 文档格式已经作为目前业内, 甚至产品界一个文档标准
 可能有很多选择, mac 下的 mou, windows 下的 markdown pad, 还有什么 atom, sublime 等.
 
 因为工作原因, java 开发的越来越多的使用 Idea, 所以不管 mac linux windows 今天推荐 Idea 的官方插件 markdown support.
-支持markdown基本语法,也支持常用的扩展table.
+支持markdown基本语法,也支持常用的扩展table. 请认准 JetBrains 出品.
 
 # markdown support 插件配置 #
 
