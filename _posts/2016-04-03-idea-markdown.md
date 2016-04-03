@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Idea Markdown Support 插件"
+description: "跨平台markdown编辑器idea markdown support"
 date:   2016-04-03
 categories: markdown
 tags: idea markdown
