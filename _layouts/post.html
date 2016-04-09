@@ -18,8 +18,9 @@ layout: default
 <div id="disqus_thread"></div>
 <script>
 var disqus_config = function () {
-	this.page.url = {{page.url}}; 
-	this.page.identifier = "http://linghaolu.github.io/git/2016/04/09/git-reset-revert.html";
+	var host = '//linghaolu.github.io';
+	this.page.url = host + "{{page.url}}"; 
+	this.page.identifier = host + "{{page.url}}"; 
 };
 (function() { // DON'T EDIT BELOW THIS LINE
 var d = document, s = d.createElement('script');
