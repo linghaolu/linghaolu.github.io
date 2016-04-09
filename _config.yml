@@ -1,10 +1,8 @@
 # Site settings
-title: 零号路
+title: 零号路杂货铺
 email: caoht.cn@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  主要记录Android以及其他相关技术。
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://yourdomain.com" # the base hostname & protocol for your site
 github_username:  linghaolu
