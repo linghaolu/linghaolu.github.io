@@ -102,3 +102,5 @@ reset 是在正常的commit历史中,删除了指定的commit,这时 HEAD 是向
 
 -----
 原文链接 [http://yijiebuyi.com/blog/8f985d539566d0bf3b804df6be4e0c90.html](http://yijiebuyi.com/blog/8f985d539566d0bf3b804df6be4e0c90.html)
+
+reset更详细的解释参考：[http://blog.csdn.net/hudashi/article/details/7664464](http://blog.csdn.net/hudashi/article/details/7664464)
