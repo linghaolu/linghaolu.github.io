@@ -47,7 +47,7 @@ AudioRecorder 提供的接口不错,边录制边返回数据,符合我们的要�
 网上还有通过MediaRecorder接口把文件直接输出到 localsocket 流中,然后边录制边读取, 这种方案略微复杂,并且 android 5.0 由于限制无法工作.
 
 我们要做的就是把 apache common io tailer 文件修改一下,就能很好的满足我们的需求.
-[https://commons.apache.org/proper/commons-io/apidocs/src-html/org/apache/commons/io/input/Tailer.html]
+[https://commons.apache.org/proper/commons-io/apidocs/src-html/org/apache/commons/io/input/Tailer.html](https://commons.apache.org/proper/commons-io/apidocs/src-html/org/apache/commons/io/input/Tailer.html)
 
 
 具体项目实现参考: [https://github.com/linghaolu/tailer](https://github.com/linghaolu/tailer)
