@@ -31,3 +31,8 @@ web 页面不能部署在这个自签名域名下，这个域名只能部署 api
 参考
 
 > http://www.oschina.net/translate/android-security-implementation-of-self-signed-ssl
+
+这个链接中提到的demo其实代码其实不太合适。
+
+更好的代码参考 google android 官方：
+[http://developer.android.com/training/articles/security-ssl.html](http://developer.android.com/training/articles/security-ssl.html)
