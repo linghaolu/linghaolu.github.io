@@ -21,4 +21,5 @@ tags: proguard
 2. 以后混淆，告诉proguard混淆时应用已有的mapping文件，保持已有函数混淆后的名字跟前一次对应。
 
 在配置文件中添加如下:
+
 > -applymapping applymapping.txt
