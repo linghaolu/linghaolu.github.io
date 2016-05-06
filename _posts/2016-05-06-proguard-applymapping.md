@@ -17,7 +17,7 @@ tags: tcl cwind
 
 # 解决办法 #
 
-1、 找到上次proguard时生成的 mapping文件，命名为一个名字，比如 applymapping.txt。
-2、 以后混淆，告诉proguard混淆时应用已有的mapping文件，保持已有函数混淆后的名字跟前一次对应。
+1. 找到上次proguard时生成的 mapping文件，命名为一个名字，比如 applymapping.txt。
+2. 以后混淆，告诉proguard混淆时应用已有的mapping文件，保持已有函数混淆后的名字跟前一次对应。
 
 > -applymapping applymapping.txt
