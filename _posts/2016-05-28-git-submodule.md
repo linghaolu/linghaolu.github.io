@@ -1,14 +1,13 @@
 ---
 layout: post
 title:  "Git Submodule"
-description: "Git submodule"
+description: "Git Submodule"
 date:   2016-05-28
-categories: submodule
-tags: submodule
+categories: git
+tags: git
 ---
 
 submodule 其实类似于 maven ，主工程引用子工程的某个版本。
-
 
 代码提交：
 
