@@ -44,6 +44,12 @@ submodule 其实类似于 maven ，主工程引用子工程的某个版本。
 
 这时候在主程序中提交，就可以把主程序对于子模块分支的引用提交到远程仓库。
 
+
+# 主程序分支的切换 #
+
+主程序通过 git checkout xxbranch 后，submodule 代码不会自动更新，需要执行 git submodule update ，这样submodule 的代码就更新到 主程序对应的代码了。
+
+
 ---
 
 参考 [https://git-scm.com/book/zh/v1/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97](https://git-scm.com/book/zh/v1/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97)
