@@ -17,3 +17,6 @@ Now, apps can define shortcuts which users can expose in the launcher to help th
 
 [http://www.androidpolice.com/2016/04/21/android-n-feature-spotlight-launcher-shortcuts-give-apps-many-new-ways-to-provide-information-and-quick-actions/](http://www.androidpolice.com/2016/04/21/android-n-feature-spotlight-launcher-shortcuts-give-apps-many-new-ways-to-provide-information-and-quick-actions/)
 
+
+update:
+在 6-15日 发布的最终版本api中删除了此接口。
