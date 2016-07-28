@@ -23,3 +23,17 @@ tags: proguard
 在配置文件中添加如下:
 
 > -applymapping applymapping.txt
+
+# 发现的问题 #
+
+云华大诗人在项目中应用过程中遇到点问题，提示warning：
+
+> Warning: ... is not being kept as ..., but remapped to ...
+
+Proguard 官网对这个也有解释，但是不属于那个原因。
+
+最后发现一个配置去掉后就没问题了
+
+> -dontshrink
+
+就是他，去掉后就没有报告那个warning了，还是挺诡异的。不过这个配置确实最好还是没有的好，shrink 过程会去掉没有用的class等，减小包体积。
