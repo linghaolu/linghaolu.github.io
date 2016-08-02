@@ -33,4 +33,13 @@ and methods in your own code.
 - 右边 Methods Counts 一栏，看到的是自己代码中的方法数，不包含引用的系统函数个数。
 
     ![](/assets/posts/2016-08-02-dex-methods/class-methods.png)
+    
+
+# Apk Analyzer #
+
+[http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html](http://android-developers.blogspot.com/2016/05/android-studio-22-preview-new-ui.html)
+
+Android studio 2.2 新引入的工具，可以查看方法数。
+
+同时该工具可以查看 resources.arsc 文件。这个给力。
 
