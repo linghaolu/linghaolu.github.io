@@ -16,9 +16,9 @@ tags: dex methods
 
 从上边连接中可以找到说明:
     
-    The Dalvik Executable specification limits the total number of methods that can be referenced 
-    within a single DEX file to 65,536—including Android framework methods, library methods, 
-    and methods in your own code.
+> The Dalvik Executable specification limits the total number of methods that can be referenced 
+within a single DEX file to 65,536—including Android framework methods, library methods, 
+and methods in your own code.
  
 # 使用ClassyShark查看方法数 #
 
