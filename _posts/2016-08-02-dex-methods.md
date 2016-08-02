@@ -27,5 +27,10 @@ and methods in your own code.
 具体可以查看 dex 总的方法引用数，以及自己class中实际的方法数。并且可以分package分别查看。
 
 - 工具左边 classes 一栏，点击要查看的dex，显示出来的是 dex中所有引用的方法数，包括系统库函数。
+
+    ![](/assets/posts/2016-08-02-dex-methods/dex-methods.png)
+
 - 右边 Methods Counts 一栏，看到的是自己代码中的方法数，不包含引用的系统函数个数。
+
+    ![](/assets/posts/2016-08-02-dex-methods/class-methods.png)
 
