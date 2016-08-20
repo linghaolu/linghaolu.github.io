@@ -39,50 +39,72 @@ Dalvik 虚拟机是专门针对Android这种移动平台设计的. 移动平台�
 
 # VM Operation #
 
-Application code is delivered to the system in a .jar or .apk file. These are really just .zip archives with some meta-data files added. The Dalvik DEX data file is always called classes.dex.
+应用程序代码是通过jar或者apk的方式交给系统运行的. jar 和 apk 其实就是 zip 文档, 额外的加了一些 meta-data 元数据. Dalvik DEX 数据文件
+叫做 classes.dex.
 
-The bytecode cannot be memory-mapped and executed directly from the zip file, because the data is compressed and the start of the file is not guaranteed to be word-aligned. These problems could be addressed by storing classes.dex without compression and padding out the zip file, but that would increase the size of the package sent across the data network.
 
-We need to extract classes.dex from the zip archive before we can use it. While we have the file available, we might as well perform some of the other actions (realignment, optimization, verification) described earlier. This raises a new question however: who is responsible for doing this, and where do we keep the output?
+字节码并不能够直接从zip文件map到内存直接运行, 因为数据是压缩的, 并且无法保证字节对齐. 这个问题可以通过不对 dex 文件压缩, 活着干脆把dex从
+zip中拿出来来解决. 但是这样回增加安装包的体积.
 
-Preparation
 
-There are at least three different ways to create a "prepared" DEX file, sometimes known as "ODEX" (for Optimized DEX):
+所以我们需要在程序真正执行前把 classes.dex 从zip中解压出来. 同时我们还可以做一些上边提到的对齐, 优化, 校验等工作. 这就涉及到谁负责做
+这些事情, 处理后的输出文件放在哪里?
 
-The VM does it "just in time". The output goes into a special dalvik-cache directory. This works on the desktop and engineering-only device builds where the permissions on the dalvik-cache directory are not restricted. On production devices, this is not allowed.
-The system installer does it when an application is first added. It has the privileges required to write to dalvik-cache.
-The build system does it ahead of time. The relevant jar / apk files are present, but the classes.dex is stripped out. The optimized DEX is stored next to the original zip archive, not in dalvik-cache, and is part of the system image.
-The dalvik-cache directory is more accurately $ANDROID_DATA/data/dalvik-cache. The files inside it have names derived from the full path of the source DEX. On the device the directory is owned by system / system and has 0771 permissions, and the optimized DEX files stored there are owned by system and the application's group, with 0644 permissions. DRM-locked applications will use 640 permissions to prevent other user applications from examining them. The bottom line is that you can read your own DEX file and those of most other applications, but you cannot create, modify, or remove them.
+## Preparation ##
 
-Preparation of the DEX file for the "just in time" and "system installer" approaches proceeds in three steps:
+至少有三种方式创建这种预处理后的 DEX 文件, 也就是我们所说的 ODEX( Optimized DEX):
 
-First, the dalvik-cache file is created. This must be done in a process with appropriate privileges, so for the "system installer" case this is done within installd, which runs as root.
+- 虚拟机通过 "Just in time" JIT 方式. 输出文件到 dalvik-cache 目录. 这种方式在工程机可以, 但是真正的release后的设备无法运行.
+因为系统的 dalvik-cache 目录有访问权限限制, 普通的app 没有权限.
+- 系统的 installer 在app安装后执行. installer 有权限写如 dalvik-cache.
+- 编译系统的时候通过 "ahead of time" AOT 的方式. 把 dex 从 apk 中解压出来, 并且执行优化等操作,生成odex文件, 但是不放到/data/Dalvik-cache
+ 目录, 而是放到 /system/app 目录下.
 
-Second, the classes.dex entry is extracted from the the zip archive. A small amount of space is left at the start of the file for the ODEX header.
 
-Third, the file is memory-mapped for easy access and tweaked for use on the current system. This includes byte-swapping and structure realigning, but no meaningful changes to the DEX file. We also do some basic structure checks, such as ensuring that file offsets and data indices fall within valid ranges.
+dalvik-cache 目录是在 /data/dalvik-cache 目录下. 文件权限 0771, 属于 system. app 只能读取不能修改.
 
-The build system uses a hairy process that involves starting the emulator, forcing just-in-time optimization of all relevant DEX files, and then extracting the results from dalvik-cache. The reasons for doing this, rather than using a tool that runs on the desktop, will become more apparent when the optimizations are explained.
+对于 "just in time" 和 "system installer" 方式生成 odex 文件有以下三个步骤:
 
-Once the code is byte-swapped and aligned, we're ready to go. We append some pre-computed data, fill in the ODEX header at the start of the file, and start executing. (The header is filled in last, so that we don't try to use a partial file.) If we're interested in verification and optimization, however, we need to insert a step after the initial prep.
+- 第一, 一般通过 system installer (installd)来创建 dalvik-cache 目录.
+- 第二, 把 classes.dex 从 zip文件中解压出来, 并且在文件开始部分预留部分区域, 目的是写入 ODEX 头.
+- 第三, odex文件可以mmap到内存直接快速访问, 并且对当前运行的系统做一些调整. 包括 byte-swapping 和 structure realigning等. 但是不会
+对原dex文件做什么修改. 同时会做一些基本的structure校验, 比如保证文件偏移和数据索引不越界等.
 
-dexopt
+之所以不再电脑上提前把这些事情处理好, 而在运行时处理是有一定原因的, 后边会进行讲解. (这个对app开发的有一定影响, 因为 dexopt 执行耗时较长
+, 但是也无法提前进行dexopt, 只能运行在目标机器上进行处理)
 
-We want to verify and optimize all of the classes in the DEX file. The easiest and safest way to do this is to load all of the classes into the VM and run through them. Anything that fails to load is simply not verified or optimized. Unfortunately, this can cause allocation of some resources that are difficult to release (e.g. loading of native shared libraries), so we don't want to do it in the same virtual machine that we're running applications in.
+当进行过 byte-swap 和 align 后, 会填充odex 头. 然后就可以开始执行程序. 如果关心 verification 和  optimizaiton, 执行前需要增加一个dexopt步骤.
+(dexopt其实是必须要执行的)
 
-The solution is to invoke a program called dexopt, which is really just a back door into the VM. It performs an abbreviated VM initialization, loads zero or more DEX files from the bootstrap class path, and then sets about verifying and optimizing whatever it can from the target DEX. On completion, the process exits, freeing all resources.
+## dexopt ##
 
-It is possible for multiple VMs to want the same DEX file at the same time. File locking is used to ensure that dexopt is only run once.
+我们要求对dex中的所有class进行verify和optimize. 最简单的方式是把所有的class加载到虚拟机并且执行一遍. 如果有失败则verify-optimize
+过程失败. 但是很不幸, 这么做会分配太多的资源并且很难释放(比如加载过的native lib), 所以这个校验过程不能和我们最后运行app虚拟机进程是同一个.
 
-Verification
+解决的办事是调用一个叫做 dexopt 的程序, 运行在一个独立进程(运行时是fork一个进程出来), 其实是个虚拟机的小后门程序.
+dexopt 直至行一些小规模的vm初始化, 并且加载 dex, 然后执行 verify 和 optimize 工作. 当完成后退出进程, 释放所有资源.
 
-The bytecode verification process involves scanning through the instructions in every method in every class in a DEX file. The goal is to identify illegal instruction sequences so that we don't have to check for them at run time. Many of the computations involved are also necessary for "exact" garbage collection. See Dalvik Bytecode Verifier Notes for more information.
+当多个vm需要对同一个文件进行 opt 时, 需要一个文件锁进行同步处理, 该文件只有一个dexopt进程对他进行处理.
 
-For performance reasons, the optimizer (described in the next section) assumes that the verifier has run successfully, and makes some potentially unsafe assumptions. By default, Dalvik insists upon verifying all classes, and only optimizes classes that have been verified. If you want to disable the verifier, you can use command-line flags to do so. See also Controlling the Embedded VM for instructions on controlling these features within the Android application framework.
+# Verification #
 
-Reporting of verification failures is a tricky issue. For example, calling a package-scope method on a class in a different package is illegal and will be caught by the verifier. We don't necessarily want to report it during verification though -- we actually want to throw an exception when the method call is attempted. Checking the access flags on every method call is expensive though. The Dalvik Bytecode Verifier Notes document addresses this issue.
+The bytecode verification process involves scanning through the instructions in every method in every class in a DEX file.
+The goal is to identify illegal instruction sequences so that we don't have to check for them at run time. Many of the computations
+involved are also necessary for "exact" garbage collection. See Dalvik Bytecode Verifier Notes for more information.
 
-Classes that have been verified successfully have a flag set in the ODEX. They will not be re-verified when loaded. The Linux access permissions are expected to prevent tampering; if you can get around those, installing faulty bytecode is far from the easiest line of attack. The ODEX file has a 32-bit checksum, but that's chiefly present as a quick check for corrupted data.
+For performance reasons, the optimizer (described in the next section) assumes that the verifier has run successfully,
+ and makes some potentially unsafe assumptions. By default, Dalvik insists upon verifying all classes, and only optimizes
+  classes that have been verified. If you want to disable the verifier, you can use command-line flags to do so. See also
+  Controlling the Embedded VM for instructions on controlling these features within the Android application framework.
+
+Reporting of verification failures is a tricky issue. For example, calling a package-scope method on a class in a different package
+is illegal and will be caught by the verifier. We don't necessarily want to report it during verification though -- we actually want to
+throw an exception when the method call is attempted. Checking the access flags on every method call is expensive though.
+The Dalvik Bytecode Verifier Notes document addresses this issue.
+
+Classes that have been verified successfully have a flag set in the ODEX. They will not be re-verified when loaded.
+The Linux access permissions are expected to prevent tampering; if you can get around those, installing faulty bytecode is
+far from the easiest line of attack. The ODEX file has a 32-bit checksum, but that's chiefly present as a quick check for corrupted data.
 
 Optimization
 
