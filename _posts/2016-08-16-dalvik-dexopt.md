@@ -88,44 +88,56 @@ dexopt 直至行一些小规模的vm初始化, 并且加载 dex, 然后执行 ve
 
 # Verification #
 
-The bytecode verification process involves scanning through the instructions in every method in every class in a DEX file.
-The goal is to identify illegal instruction sequences so that we don't have to check for them at run time. Many of the computations
-involved are also necessary for "exact" garbage collection. See Dalvik Bytecode Verifier Notes for more information.
+字节码校验过程需要扫描所有类的所有方法指令. 目标是在这个阶段识别所有非法指令, 而不用在运行时来做检查.
 
-For performance reasons, the optimizer (described in the next section) assumes that the verifier has run successfully,
- and makes some potentially unsafe assumptions. By default, Dalvik insists upon verifying all classes, and only optimizes
-  classes that have been verified. If you want to disable the verifier, you can use command-line flags to do so. See also
-  Controlling the Embedded VM for instructions on controlling these features within the Android application framework.
 
-Reporting of verification failures is a tricky issue. For example, calling a package-scope method on a class in a different package
-is illegal and will be caught by the verifier. We don't necessarily want to report it during verification though -- we actually want to
-throw an exception when the method call is attempted. Checking the access flags on every method call is expensive though.
-The Dalvik Bytecode Verifier Notes document addresses this issue.
+出于性能考虑, 下一章要讲的optimizer假设verifier成功执行了. 并且会有些潜在不安全的假设. 默认情况下 dalvik 会校验所有class, 并且只对
+校验过的class 做 optimize. 如果想disable verifier 可以通过命令行 flag 来操作. 另外可以通过
+[http://www.netmite.com/android/mydroid/dalvik/docs/embedded-vm-control.html](http://www.netmite.com/android/mydroid/dalvik/docs/embedded-vm-control.html)
+如果在framework 层控制.
 
-Classes that have been verified successfully have a flag set in the ODEX. They will not be re-verified when loaded.
-The Linux access permissions are expected to prevent tampering; if you can get around those, installing faulty bytecode is
-far from the easiest line of attack. The ODEX file has a 32-bit checksum, but that's chiefly present as a quick check for corrupted data.
 
-Optimization
+报告 verification 错误是个比较复杂的事情, 比如包访问权限违规, 我们没必要在娇艳阶段报告错误,实际上是在运行时报告. 这种检查还是比较费时的.
+可以通过 [http://www.netmite.com/android/mydroid/dalvik/docs/verifier.html](http://www.netmite.com/android/mydroid/dalvik/docs/verifier.html)
+更详细的了解.
 
-Virtual machine interpreters typically perform certain optimizations the first time a piece of code is used. Constant pool references are replaced with pointers to internal data structures, operations that always succeed or always work a certain way are replaced with simpler forms. Some of these require information only available at runtime, others can be inferred statically when certain assumptions are made.
 
-The Dalvik optimizer does the following:
+被校验通过的 class 会在 ODEX 文件中做个标记 flag. 加载的时候不会再次校验.
 
-For virtual method calls, replace the method index with a vtable index.
-For instance field get/put, replace the field index with a byte offset. Also, merge the boolean / byte / char / short variants into a single 32-bit form (less code in the interpreter means more room in the CPU I-cache).
-Replace a handful of high-volume calls, like String.length(), with "inline" replacements. This skips the usual method call overhead, directly switching from the interpreter to a native implementation.
-Prune empty methods. The simplest example is Object.<init>, which does nothing, but must be called whenever any object is allocated. The instruction is replaced with a new version that acts as a no-op unless a debugger is attached.
-Append pre-computed data. For example, the VM wants to have a hash table for lookups on class name. Instead of computing this when the DEX file is loaded, we can compute it now, saving heap space and computation time in every VM where the DEX is loaded.
-All of the instruction modifications involve replacing the opcode with one not defined by the Dalvik specification. This allows us to freely mix optimized and unoptimized instructions. The set of optimized instructions, and their exact representation, is tied closely to the VM version.
+# Optimization #
 
-Most of the optimizations are obvious "wins". The use of raw indices and offsets not only allows us to execute more quickly, we can also skip the initial symbolic resolution. Pre-computation eats up disk space, and so must be done in moderation.
+虚拟机解释器通常在代码第一次运行时做一些优化工作. 比如常量池的引用会转化为内部数据结构指针的方式, 对于经常成功执行活着某种工作方式的代码,
+会转化成另外一种更简单的形式. 其中一些工作只能在运行时进行, 另外一些可以通过一些规则静态的来进行.
 
-There are a couple of potential sources of trouble with these optimizations. First, vtable indices and byte offsets are subject to change if the VM is updated. Second, if a superclass is in a different DEX, and that other DEX is updated, we need to ensure that our optimized indices and offsets are updated as well. A similar but more subtle problem emerges when user-defined class loaders are employed: the class we actually call may not be the one we expected to call.
+
+Dalvik optimizer 做以下事情:
+
+- 对于 virtual method 调用, 使用 vtable 虚函数指针列表索引 代替 文件中的 method 索引.
+- 对于对象的 field get/put 操作, 用 1 byte offset 来代替 field 索引. 另外合并 boolean / byte / char / short 成一个 32 bit 形式.
+(less code in the interpreter means more room in the CPU I-cache).
+- 把一些经常调用的简单函数比如 String.length() 改为内联函数. 这样就减少函数调用的消耗.
+- 修剪空方法. 最简单的例子 Object.<init>, 什么也不做. 但是每次对象分配时都得必须调用. 指令被替换成另外一种新的实现, 除非有 debugger
+attach 上了, 要不然什么也不做.
+- 添加一些可以提前计算好的数据. 比如 对于虚拟机查找 class name 的 hashtable. 可以提前计算好, 而不需要执行的时候再计算.
+
+
+所有的这些指令修改涉及到替换一些不受虚拟机规范约束的 opcode 替换. 这样可以更自由的对 optimized 和 unoptimized 指令进行组合. 优化过的
+指令和他们所代表的实际意义跟虚拟机版本绑定.
+
+
+大部分优化工作是成功的. 使用原始的索引和偏移不仅仅可以执行的更快, 并且可以忽略符号表的初始化. 提前计算很吃磁盘空间, 所以这个提前计算工作
+需要适度.
+
+
+优化工作还是有潜在的一些麻烦的. 第一 vtable 虚函数表索引 和 字节 offset 是会发生变化的如果虚拟机更新的话. 第二 如果一个class的superclass
+在另外一个dex文件中, 并且那个dex更新了, 那么我们就需要保证我们这个dex需要重新更新索引和偏移(也就是需要重新进行opt). 一个类似的更微妙
+的情景, 当我们自定义一个classloader 时候, 调用一个class 有可能实际不是我们想要的class.(指的是第一个dex中的类通过自定义classloader加载
+另一个dex中的class ?)
 
 These problems are addressed with dependency lists and some limitations on what can be optimized.
 
-Dependencies and Limitations
+
+# Dependencies and Limitations #
 
 The optimized DEX file includes a list of dependencies on other DEX files, plus the CRC-32 and modification date from the originating classes.dex zip file entry. The dependency list includes the full path to the dalvik-cache file, and the file's SHA-1 signature. The timestamps of files on the device are unreliable and not used. The dependency area also includes the VM version number.
 
