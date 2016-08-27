@@ -139,24 +139,30 @@ These problems are addressed with dependency lists and some limitations on what 
 
 # Dependencies and Limitations #
 
-The optimized DEX file includes a list of dependencies on other DEX files, plus the CRC-32 and modification date from the originating classes.dex zip file entry. The dependency list includes the full path to the dalvik-cache file, and the file's SHA-1 signature. The timestamps of files on the device are unreliable and not used. The dependency area also includes the VM version number.
+optimize后的 odex file 包含了一个对其他dex 的一来列表, 同时包含odex对应的原始 classes.dex 文件的修改时间和crc校验码.  依赖列表包含
+dalvik-cache 文件的全路径, 已经sha-1签名. 时间戳不使用的系统文件的时间戳, 应为不可信(使用的应该是zip文件中的时间字段). 依赖数据同时包含vm的版本号.
 
-An optimized DEX is dependent upon all of the DEX files in the bootstrap class path. DEX files that are part of the bootstrap class path depend upon the DEX files that appeared earlier. To ensure that nothing outside the dependent DEX files is available, dexopt only loads the bootstrap classes. References to classes in other DEX files fail, which causes class loading and/or verification to fail, and classes with external dependencies are simply not optimized.
+optimized dex 依赖于所有的系统bootstrap class path 中的 dex 文件. bootstrap 中的越是依赖于其他bootstrap 中的dex的越靠前.
+为了保证除了所依赖的dex文件以外所有其他都不可用, dexopt 只是加载 bootstrap 中的class. 依赖其他 dex 中的class 会导致load 和 verificatin 错误,
+有依赖外部dex的class 就简单的没有被optimized.
 
-This means that splitting code out into many separate DEX files has a disadvantage: virtual method calls and instance field lookups between non-boot DEX files can't be optimized. Because verification is pass/fail with class granularity, no method in a class that has any reliance on classes in external DEX files can be optimized. This may be a bit heavy-handed, but it's the only way to guarantee that nothing breaks when individual pieces are updated.
+这就意味着当把代码打包成多个dex的时候有个负面的影响: 自己的多个dex间的方法调用或者变量引用没有办法 optimized. 因为 verification 过程是
+类颗粒度的, 没有办法对依赖外部dex的类进行optimize. 虽然这么做有点过分, 但是这是唯一办法可以保证单独的一个dex有更新, 不影响其他dex.
 
-Another negative consequence: any change to a bootstrap DEX will result in rejection of all optimized DEX files. This makes it hard to keep system updates small.
 
-Despite our caution, there is still a possibility that a class in a DEX file loaded by a user-defined class loader could ask for a bootstrap class (say, String) and be given a different class with the same name. If a class in the DEX file being processed has the same name as a class in the bootstrap DEX files, the class will be flagged as ambiguous and references to it will not be resolved during verification / optimization. The class linking code in the VM does additional checks to plug another hole; see the verbose description in the VM sources for details (vm/oo/Class.c).
+另外一个负面影: 对于系统bootstrap dex 的更新, 回到之依赖这些的优化过后的 dex 失效,需要重新进行opt.
 
-If one of the dependencies is updated, we need to re-verify and re-optimize the DEX file. If we can do a just-in-time dexopt invocation, this is easy. If we have to rely on the installer daemon, or the DEX was shipped only in ODEX, then the VM has to reject the DEX.
 
-The output of dexopt is byte-swapped and struct-aligned for the host, and contains indices and offsets that are highly VM-specific (both version-wise and platform-wise). For this reason it's tricky to write a version of dexopt that runs on the desktop but generates output suitable for a particular device. The safest way to invoke it is on the target device, or on an emulator for that device.
+尽管我们很小心,但还是有可能自定义一个classloader使用自定义一样名字的类来返回系统的类,比如 String. 在dex 中, 如果一个class的名字和bootstrap
+dex 中的一样. 则这个class 被标记为有歧义的, 并且在optimize和verify过程中不能被识别. The class linking code in the VM does additional checks to plug another hole;
+see the verbose description in the VM sources for details (vm/oo/Class.c).
 
-Generated DEX
 
-Some languages and frameworks rely on the ability to generate bytecode and execute it. The rather heavy dexopt verification and optimization model doesn't work well with that.
+dexopt 输出的 odex 文件是相对于其运行的设备 byte-swapped, struct-aligned. 并且包含的索引 偏移量等是高度和虚拟机吻合的(包括版本,平台等).
+出于这个原因, 不大可能写一个pc上跑的一个 dexopt 来提前完成这个工作. dexopt 最安全的办法还是在运行的设备上执行, 或者对应的模拟器上.
 
-We intend to support this in a future release, but the exact method is to be determined. We may allow individual classes to be added or whole DEX files; may allow Java bytecode or Dalvik bytecode in instructions; may perform the usual set of optimizations, or use a separate interpreter that performs on-first-use optimizations directly on the bytecode (which won't be mapped read-only, since it's locally defined).
 
-http://www.netmite.com/android/mydroid/dalvik/docs/dexopt.html
+----------
+以上文字仅仅是个翻译, 是最近再看相关资料时感觉有必要整理下.
+
+原文链接[http://www.netmite.com/android/mydroid/dalvik/docs/dexopt.html](http://www.netmite.com/android/mydroid/dalvik/docs/dexopt.html)
