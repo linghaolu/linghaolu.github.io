@@ -163,6 +163,6 @@ dexopt 输出的 odex 文件是相对于其运行的设备 byte-swapped, struct-
 
 
 ----------
-以上文字仅仅是个翻译, 是最近再看相关资料时感觉有必要整理下.
+以上文字仅仅是个翻译, 是最近再看相关资料时感觉有必要整理下. 这个可以在系统源码中找到.
 
-原文链接[http://www.netmite.com/android/mydroid/dalvik/docs/dexopt.html](http://www.netmite.com/android/mydroid/dalvik/docs/dexopt.html)
+在线链接[http://www.netmite.com/android/mydroid/dalvik/docs/dexopt.html](http://www.netmite.com/android/mydroid/dalvik/docs/dexopt.html)
