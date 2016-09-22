@@ -9,3 +9,6 @@ tags: Sciter
 
 http://riaoo.com/wp-content/uploads/2009/09/ZIP-File-Format-Specification-2007-zh_cn.txt
 
+[http://archimedespalimpsest.net/Documents/External/ZIPFileFormatSpecification_6.3.2.txt](http://archimedespalimpsest.net/Documents/External/ZIPFileFormatSpecification_6.3.2.txt)
+
+
