@@ -6,6 +6,8 @@ categories: zip
 tags: Sciter
 ---
 
+查看zip文件的详细信息   > zipinfo -v xxx.zip
+
 
 http://riaoo.com/wp-content/uploads/2009/09/ZIP-File-Format-Specification-2007-zh_cn.txt
 
