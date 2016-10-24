@@ -73,4 +73,12 @@ apk 默认情况下没有comment，所以 comment length的short 两个字节为
 请参考项目: [https://github.com/linghaolu/apkcomment](https://github.com/linghaolu/apkcomment)
 
 # 已知问题 #
-Android N 中提到了 APK Signature Scheme v2，这种新引入的签名机制，会对整个文件的每个字节都会做校验，包括 comment 区域。所以到时候如果app使用新版本的签名工具的时候，如果启用 scheme v2，那么这个机制则不能工作。目前看代码，是可以disable v2 的。不过具体的运行机制，还需要正式版本出来。
+Android N 中提到了 APK Signature Scheme v2，这种新引入的签名机制，会对整个文件的每个字节都会做校验，包括 comment 区域。所以到时候如果app使用新版本的签名工具的时候，如果启用 scheme v2，那么这个机制则不能工作。目前看代码，是可以disable v2 的。
+
+在gradle 中通过如下方式 disable scheme v2
+
+    signingConfigs {
+        release {
+            v2SigningEnabled false
+        }
+    }    
