@@ -120,5 +120,5 @@ android gradle plugin 2.2 编译 debug 包就输出的 apk 就属于这个情况
 
 具体的修复代码以及二进制文件请参考 [https://github.com/linghaolu/aapt](https://github.com/linghaolu/aapt)
 
-当然是用 linux zip delete 功能也是 ok 的，但是会修改 zip 中的一些属性。不影响使用。
+当然使用 linux zip delete 功能也是 ok 的，但是会修改 zip 中 entry 的一些属性。不影响使用。
 
