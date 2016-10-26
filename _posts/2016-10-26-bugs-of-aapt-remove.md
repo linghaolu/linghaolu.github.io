@@ -21,16 +21,16 @@ aapt 相关的代码在 frameworks/base/tools/aapt 目录下，删除实现在 Z
         int i, count;
         long delCount, adjust;
 
-    /*
-     * Roll through the set of files, shifting them as appropriate.  We
-     * could probably get a slight performance improvement by sliding
-     * multiple files down at once (because we could use larger reads
-     * when operating on batches of small files), but it's not that useful.
-     */
-    count = mEntries.size();
-    delCount = adjust = 0;
-    for (i = 0; i < count; i++) {
-        ZipEntry* pEntry = mEntries[i];
+        /*
+         * Roll through the set of files, shifting them as appropriate.  We
+         * could probably get a slight performance improvement by sliding
+         * multiple files down at once (because we could use larger reads
+         * when operating on batches of small files), but it's not that useful.
+         */
+        count = mEntries.size();
+        delCount = adjust = 0;
+        for (i = 0; i < count; i++) {
+            ZipEntry* pEntry = mEntries[i];
             long span;
             
             // !!! bug  这里是一个大bug，要删除的第一个第一个 entry 的 lfh offset 基本大多数情况为 0
