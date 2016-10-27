@@ -50,7 +50,7 @@ aapt 相关的代码在 frameworks/base/tools/aapt 目录下，删除实现在 Z
                 span = nextOffset - pEntry->getLFHOffset();
 
                 assert(span >= ZipEntry::LocalFileHeader::kLFHLen);
-            } else {
+            } else {    
                 // !!! 这个注释应该是不正确，zip 文件格式中区分目录还是文件不是按照 offset 是否为0.
                 // 在 zip 文件格式中 目录 和 文件在这个 lhf offset上是没有区别的， 目录也是个正常的 entry 也有合法的 offset
                 // 是否是目录是根据 zip 格式中的 external file attribute 来识别的。这个attribue 跟 linux 下的 file attribute 是一样的
