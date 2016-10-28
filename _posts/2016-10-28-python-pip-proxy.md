@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "How to set python pip proxy"
+title:  "Setup proxy for python pip"
 date:   2016-10-28
 categories: python
 tags: pip
@@ -8,6 +8,6 @@ tags: pip
 
 Set Proxy for Python pip install.
 
-> [global]
+> [global]   
   proxy = http://server:port
 
