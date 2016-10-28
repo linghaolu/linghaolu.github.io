@@ -11,6 +11,7 @@ Set Proxy for Python pip install.
 Windows:    
 
 Create a file : 
+
 > C:\Users\your_user_name\pip\pip.ini
 
 Write the proxy info to the file.   
